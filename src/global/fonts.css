@@ -1,0 +1,6 @@
+@import url('https://s3.amazonaws.com/cdn.qrvey.com/widgets-assets/qrvey-icons/style.css');
+@import url('https://fonts.googleapis.com/css?family=Roboto&display=swap');
+
+:host {
+  font-family: 'Roboto', sans-serif;
+}

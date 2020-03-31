@@ -1,0 +1,45 @@
+v-grid {
+  $border: solid 1px gray;
+
+  max-height: 500px; // testing
+  display: block;
+  overflow: auto;
+  // border: $border;
+  box-sizing: border-box;
+  position: relative;
+
+  .v-scroll {
+    width: 1px;
+    position: absolute;
+    top: 0;
+  }
+
+
+  table {
+    display: table;
+    border-collapse: collapse;
+    width: 100%;
+    position: sticky;
+    top: 0;
+  }
+
+  v-row {
+    display: table-row;
+    height: calc(1em + 2*var(--cell-pading, 5));
+  }
+
+  th {
+    background-color: gainsboro;
+  }
+
+  th,
+  td {
+    padding: 5px;
+    border: $border;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    box-sizing: border-box;
+    white-space: nowrap;
+  }
+
+}

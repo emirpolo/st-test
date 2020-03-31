@@ -1,0 +1,22 @@
+qv-pill-container {
+  padding: 5px 0 5px 5px;
+  display: flex;
+  border: solid 1px;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+qv-pill-container .pill {
+  border: 1px dotted;
+  border-radius: 5px;
+  padding: 5px;
+  margin-right: 5px;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+
+qv-pill-container[data-overflow] .pill:not(:last-child){
+  text-overflow: ellipsis;
+  overflow: hidden;
+  flex: auto;
+}

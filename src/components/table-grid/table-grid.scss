@@ -1,0 +1,42 @@
+table-grid {
+  $border: solid 1px gray;
+
+  max-height: 500px; // testing
+  display: block;
+  overflow: auto;
+  border: $border;
+  box-sizing: border-box;
+
+  table {
+    position: relative;
+    display: table;
+    border-collapse: collapse;
+    width: calc(100% - 2px);
+  }
+
+  th {
+    position: sticky;
+    top: 0;
+    padding: 5px;
+    background-color: gainsboro;
+    box-shadow: inset -1px -1px 0px 0px gray;
+    transform: translateX(1px);
+  }
+
+  td {
+    border-color: gray;
+    padding: 5px;
+    border-style: solid;
+    border-width: 0px 1px 1px 0px;
+  }
+
+  tbody tr:not(.visible) {
+    visibility: hidden;
+  }
+
+}
+
+table-row {
+  display: table-row;
+  height: calc(1em + 10px);
+}

@@ -1,0 +1,5 @@
+@import '../../global/fonts.css';
+:host {
+  display: block;
+  background-color: var(--bg-color, orange);
+}
