@@ -9,16 +9,11 @@ import { Debounce } from "@qrvey/widgetutils";
 })
 export class TableGrid implements ComponentInterface {
   columns;
-  bounds;
-  observer;
-  raf;
-
-  tableHeight = 500;
+  tableHeight = 700;
   rowHeight = 35;
   totalRows = 0;
   inEnd = false;
   lastScrollTop = 0;
-
   calcs;
   table;
 
@@ -45,19 +40,8 @@ export class TableGrid implements ComponentInterface {
   }
 
   componentDidUpdate() {
-    this.table = this.host.querySelector('table');
-    requestAnimationFrame(_ => {
-    if (this.table && !this.columns.initialized) {
-      const thList = this.table.querySelectorAll('thead th');
-      for (const th of thList) {
-        console.log('-->>', th.clientWidth)
-        th.setAttribute('width', th.clientWidth + 'px');
-      }
-      this.columns.initialized = true;
-    }
-  })
+    this.setColumnDimensions();
   }
-
 
 
   @Listen('scroll')
@@ -70,6 +54,25 @@ export class TableGrid implements ComponentInterface {
     if (this.inEnd && dir === 'DOWN') return;
 
     this.index = Math.floor(scrollTop / this.rowHeight);
+  }
+
+  setColumnDimensions() {
+    const minColWidth = 50; // this must to be a Prop
+
+    this.table = this.host.querySelector('table');
+
+    if (this.table && !this.columns.initialized) {
+      requestAnimationFrame(_ => {
+        const thList = this.table.querySelectorAll('thead th');
+        const colList = this.table.querySelectorAll('col');
+
+        for (let i = 0, l = thList.length; i < l; i++) {
+          colList[i].setAttribute('width', Math.max(minColWidth, thList[i].clientWidth) + 'px');
+        }
+        this.table.style.tableLayout = 'fixed';
+        this.columns.initialized = true;
+      });
+    }
   }
 
   getVisibleData() {
@@ -100,24 +103,34 @@ export class TableGrid implements ComponentInterface {
   }
 
 
+  renderCols() {
+    return <colgroup key="columns">
+      {this.columns.map(col => <col key={col.key} />)}
+    </colgroup>;
+  }
+
   renderHeaders() {
-    return <v-row>
-      {this.columns.map(col => <th key={col.key}>{col.header}</th>)}
-    </v-row>
+    return <thead key="header">
+      <v-row key="header">
+        {this.columns.map(col => <th key={col.key}>{col.header}</th>)}
+      </v-row>
+    </thead>;
   }
 
   renderbody() {
-    return this.getVisibleData().map((row, i) => <v-row key={i} row={row} columns={this.columns} />);
+    return <tbody key="body">
+      {this.getVisibleData().map((row, i) => <v-row key={i} row={row} columns={this.columns} />)}
+    </tbody>;
   }
-
 
   render() {
     if (!this.tableData) return 'loading ...';
 
     return <Host>
       <table key="table">
-        <thead key="header">{this.renderHeaders()}</thead>
-        <tbody key="body">{this.renderbody()}</tbody>
+        {this.renderCols()}
+        {this.renderHeaders()}
+        {this.renderbody()}
       </table>
 
       <div key='scroll' class="v-scroll" style={{ height: (this.calcs.scrollHeight) + 'px' }} />

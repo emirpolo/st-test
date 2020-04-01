@@ -1,7 +1,5 @@
 v-grid {
   $border: solid 1px gray;
-
-  max-height: 500px; // testing
   display: block;
   overflow: auto;
   // border: $border;
@@ -25,7 +23,7 @@ v-grid {
 
   v-row {
     display: table-row;
-    height: calc(1em + 2*var(--cell-pading, 5));
+    min-height: 30px;
   }
 
   th {
@@ -36,10 +34,10 @@ v-grid {
   td {
     padding: 5px;
     border: $border;
+    white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
     box-sizing: border-box;
-    white-space: nowrap;
   }
 
 }
