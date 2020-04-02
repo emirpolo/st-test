@@ -1,6 +1,8 @@
 import { Component, ComponentInterface, State, h, Element, Host, Listen } from "@stencil/core";
 import { getDummyData } from "./utils/services";
 import { Debounce } from "@qrvey/widgetutils";
+import { renderTable } from "./utils/renders";
+import VGridMath from "./utils/VGridMath";
 
 
 @Component({
@@ -11,31 +13,21 @@ export class TableGrid implements ComponentInterface {
   columns;
   tableHeight = 700;
   rowHeight = 35;
-  totalRows = 0;
-  inEnd = false;
-  lastScrollTop = 0;
-  calcs;
+  calcs: VGridMath;
   table;
-
-  @State() index = 0;
 
   @Element() host: HTMLElement;
 
   @State() tableData;
+  @State() index = 0;
 
   constructor() {
     this.columns = this.setColumns();
     getDummyData().then(data => {
-      // data = data.slice(0, 50); // easy test
-
-      this.totalRows = data.length;
+      // data = data.slice(0, 50); // easy test;
       this.tableData = data /*.concat(data, data, data, data, data, data, data, data, data)*/
 
-      this.calcs = {
-        scrollHeight: this.rowHeight * (this.totalRows + 1), // +1 for header
-        viewportRows: Math.floor((this.tableHeight - this.rowHeight) / this.rowHeight)
-      }
-      console.log(this.calcs)
+      this.calcs = new VGridMath(this.tableHeight, data.length, this.rowHeight);
     });
   }
 
@@ -47,13 +39,8 @@ export class TableGrid implements ComponentInterface {
   @Listen('scroll')
   @Debounce(16)
   onScroll(_e: MouseEvent) {
-    const scrollTop = this.host.scrollTop;
-    const dir = scrollTop > this.lastScrollTop ? 'DOWN' : 'UP';
-
-    this.lastScrollTop = scrollTop;
-    if (this.inEnd && dir === 'DOWN') return;
-
-    this.index = Math.floor(scrollTop / this.rowHeight);
+    const index = this.calcs.getFirstRowIndex(this.host.scrollTop);
+    if (index !== undefined) this.index = index;
   }
 
   setColumnDimensions() {
@@ -76,17 +63,7 @@ export class TableGrid implements ComponentInterface {
   }
 
   getVisibleData() {
-    this.inEnd = false;
-    let pageStart = this.index;
-    let pageEnd = this.index + this.calcs.viewportRows;
-
-    if (pageEnd > this.totalRows) {
-      pageEnd = this.totalRows;
-      pageStart = pageEnd - this.calcs.viewportRows;
-      this.inEnd = true;
-    }
-
-    return this.tableData.slice(pageStart, pageEnd);
+    return this.calcs.getPageRange(this.tableData, this.index);
   }
 
   setColumns() {
@@ -103,35 +80,11 @@ export class TableGrid implements ComponentInterface {
   }
 
 
-  renderCols() {
-    return <colgroup key="columns">
-      {this.columns.map(col => <col key={col.key} />)}
-    </colgroup>;
-  }
-
-  renderHeaders() {
-    return <thead key="header">
-      <v-row key="header">
-        {this.columns.map(col => <th key={col.key}>{col.header}</th>)}
-      </v-row>
-    </thead>;
-  }
-
-  renderbody() {
-    return <tbody key="body">
-      {this.getVisibleData().map((row, i) => <v-row key={i} row={row} columns={this.columns} />)}
-    </tbody>;
-  }
-
   render() {
     if (!this.tableData) return 'loading ...';
 
     return <Host>
-      <table key="table">
-        {this.renderCols()}
-        {this.renderHeaders()}
-        {this.renderbody()}
-      </table>
+      {renderTable(this.columns, this.getVisibleData())}
 
       <div key='scroll' class="v-scroll" style={{ height: (this.calcs.scrollHeight) + 'px' }} />
     </Host>;

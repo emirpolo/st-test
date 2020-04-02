@@ -1,5 +1,5 @@
 v-grid {
-  $border: solid 1px gray;
+  $border: solid 1px #dfdfdf;
   display: block;
   overflow: auto;
   // border: $border;
@@ -28,6 +28,16 @@ v-grid {
 
   th {
     background-color: gainsboro;
+    position: relative;
+
+    &:hover .v-col-resize {
+      cursor: col-resize;
+      border: solid 1px red;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      right: 0;
+    }
   }
 
   th,
