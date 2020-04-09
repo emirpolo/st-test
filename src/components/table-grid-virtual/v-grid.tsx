@@ -12,7 +12,7 @@ import VGridMath from "./utils/VGridMath";
 export class TableGrid implements ComponentInterface {
   columns;
   tableHeight = 700;
-  rowHeight = 35;
+  rowHeight = 26;
   calcs: VGridMath;
   table;
 
@@ -29,6 +29,10 @@ export class TableGrid implements ComponentInterface {
 
       this.calcs = new VGridMath(this.tableHeight, data.length, this.rowHeight);
     });
+  }
+
+  componentDidLoad() {
+    this.setColumnDimensions();
   }
 
   componentDidUpdate() {
@@ -51,10 +55,8 @@ export class TableGrid implements ComponentInterface {
     if (this.table && !this.columns.initialized) {
       requestAnimationFrame(_ => {
         const thList = this.table.querySelectorAll('thead th');
-        const colList = this.table.querySelectorAll('col');
-
-        for (let i = 0, l = thList.length; i < l; i++) {
-          colList[i].setAttribute('width', Math.max(minColWidth, thList[i].clientWidth) + 'px');
+        for (const th of thList) {
+          th.setAttribute('width', Math.max(minColWidth, th.clientWidth) + 'px');
         }
         this.table.style.tableLayout = 'fixed';
         this.columns.initialized = true;
@@ -67,16 +69,22 @@ export class TableGrid implements ComponentInterface {
   }
 
   setColumns() {
-    // return [
-    //   { key: 'id', header: 'ID' }, { key: 'name', header: 'Name' },
-    //   { key: 'email', header: 'E-mail' }, { key: 'body', header: 'Detail' }
-    // ]
     return [
-      { key: 'albumId', header: 'Album #' }, { key: 'id', header: 'ID' },
-      { key: 'title', header: 'Name' },
-      { key: 'url', header: 'Cover', render: (cell, row) => <img loading="lazy" style={{ height: "20px" }} src={cell} alt={row.title} /> },
-      { key: 'thumbnailUrl', header: 'Preview', render: (cell, row) => <img loading="lazy" style={{ height: "20px" }} src={cell} alt={row.title} /> }
+      { key: 'id', header: 'ID' },
+      { key: 'first_name', header: 'First Name' },
+      { key: 'last_name', header: 'Last Name' },
+      { key: 'email', header: 'E-mail' },
+      { key: 'gender', header: 'Gender' },
+      { key: 'ip_address', header: 'IP' },
+      // { key: 'text', header: 'Browser' },
+      { key: 'timezone', header: 'TimeZone' },
     ]
+    // return [
+    //   { key: 'albumId', header: 'Album #' }, { key: 'id', header: 'ID' },
+    //   { key: 'title', header: 'Name' },
+    //   { key: 'url', header: 'Cover', render: (cell, row) => <img loading="lazy" style={{ height: "20px" }} src={cell} alt={row.title} /> },
+    //   { key: 'thumbnailUrl', header: 'Preview', render: (cell, row) => <img loading="lazy" style={{ height: "20px" }} src={cell} alt={row.title} /> }
+    // ]
   }
 
 

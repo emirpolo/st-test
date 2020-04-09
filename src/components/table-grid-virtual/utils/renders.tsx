@@ -1,17 +1,14 @@
 import { h } from "@stencil/core";
-
-function renderCols(columns = []) {
-  return <colgroup key="columns">
-    {columns.map(col => <col key={col.key} />)}
-  </colgroup>;
-}
+import ColumnResizer from './ResizeColumns';
 
 function renderHeaders(columns = []) {
+  const columResizer = new ColumnResizer();
+
   return <thead key="header">
     <v-row key="header">
-      {columns.map(col => <th key={col.key}>
+      {columns.map((col, i) => <th key={col.key}>
         {col.header}
-        <i class="v-col-resize" />
+        <i class="v-col-resize" data-index={i} onMouseDown={columResizer.start} />
       </th>)}
     </v-row>
   </thead>;
@@ -23,10 +20,8 @@ function renderbody(columns = [], rowData = []) {
   </tbody>;
 }
 
-
 export function renderTable(columns, rowData) {
   return <table key="table">
-    {renderCols(columns)}
     {renderHeaders(columns)}
     {renderbody(columns, rowData)}
   </table>

@@ -6,7 +6,7 @@ export default class VGridMath {
   maxRowsByPage;
 
   constructor(public tableHeight, public totalRows, public rowHeight = 30) {
-    this.scrollHeight = rowHeight * (totalRows + 1);
+    this.scrollHeight = rowHeight * (totalRows + 1) + 5;
     this.maxRowsByPage = Math.floor((tableHeight - rowHeight) / rowHeight);
   }
 
